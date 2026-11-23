@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F1E3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hydratation">
+<title>Calcul de l'hydratation</title> 
+<style>
+  /* Mise en page : une colonne centrée. En-tête avec filet rouge, formulaire, bloc résultat. */
+  :root {
+    --bg: #F6F1E3;
+    --surface: #FCFAF2;
+    --fg: #141414;
+    --muted: #5B574A;
+    --line: #DAD2BA;
+    --green: #1E7B3F;
+    --red: #D1202C;
+    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-top: max(24px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(40px, env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+
+  header { padding-bottom: 20px; border-bottom: 3px solid var(--red); }
+  h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 7vw, 36px); line-height: 1.1; color: var(--green); text-wrap: balance; }
+
+  form { display: flex; flex-direction: column; gap: 20px; }
+  .row { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 480px) { .row { grid-template-columns: 1fr 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  label { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--green); letter-spacing: 0.02em; }
+  .input-wrap { display: flex; align-items: stretch; background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .input-wrap:focus-within { border-color: var(--green); }
+  input[type="text"] { flex: 1; min-width: 0; font: inherit; font-size: 18px; font-variant-numeric: tabular-nums; color: var(--fg); background: transparent; border: 0; padding: 12px 14px; }
+  input[type="text"]:focus-visible { outline: none; }
+  .unit { display: flex; align-items: center; padding: 0 14px; color: var(--muted); font-size: 15px; border-left: 1.5px solid var(--line); }
+  .hint { margin: 0; font-size: 13px; color: var(--muted); }
+
+  .result { background: var(--surface); border: 1.5px solid var(--line); border-top: 5px solid var(--green); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .result h2 { margin: 0; font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); }
+  .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 12vw, 64px); line-height: 1; color: var(--green); font-variant-numeric: tabular-nums; }
+  .big small { font-size: 0.45em; font-weight: 600; margin-left: 6px; color: var(--fg); }
+  .recap { margin: 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .msg { margin: 0; font-size: 15px; color: var(--red); font-weight: 500; }
+  .msg[hidden] { display: none; }
+  input:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Calcul de l'hydratation</h1>
+  </header>
+
+  <form id="calc" novalidate>
+    <div class="field">
+      <label for="masse">Masse de semoule ou farine</label>
+      <div class="input-wrap">
+        <input type="text" id="masse" inputmode="decimal" autocomplete="off" value="2000">
+        <span class="unit">g</span>
+      </div>
+      <p class="hint">Exemple : 2000</p>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="hi">Humidité initiale</label>
+        <div class="input-wrap">
+          <input type="text" id="hi" inputmode="decimal" autocomplete="off" value="12">
+          <span class="unit">%</span>
+        </div>
+        <p class="hint">Exemple : 12,5</p>
+      </div>
+      <div class="field">
+        <label for="hc">Humidité cible</label>
+        <div class="input-wrap">
+          <input type="text" id="hc" inputmode="decimal" autocomplete="off" value="31,5">
+          <span class="unit">%</span>
+        </div>
+        <p class="hint">Exemple : 31,7</p>
+      </div>
+    </div>
+  </form>
+
+  <section class="result" aria-live="polite">
+    <h2>Eau à ajouter</h2>
+    <div class="big"><span id="out">–</span><small>g</small></div>
+    <p class="msg" id="msg" hidden></p>
+    <p class="recap" id="recap"></p>
+  </section>
+</div>
+
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+  var IDS = ['masse', 'hi', 'hc'];
+
+  function num(v) {
+    var n = parseFloat(String(v).trim().replace(',', '.'));
+    return isFinite(n) ? n : NaN;
+  }
+  function fmt(n) { return String(n).replace('.', ','); }
+
+  function fail(text) {
+    $('out').textContent = '–';
+    $('recap').textContent = '';
+    $('msg').textContent = text;
+    $('msg').hidden = false;
+  }
+
+  function compute() {
+    var m = num($('masse').value), hi = num($('hi').value), hc = num($('hc').value);
+    $('msg').hidden = true; $('msg').textContent = '';
+    if (isNaN(m) || isNaN(hi) || isNaN(hc)) {
+      $('out').textContent = '–'; $('recap').textContent = '';
+      return;
+    }
+    if (m <= 0) { return fail('La masse doit être supérieure à 0.'); }
+    if (hc >= 100) { return fail("L'humidité cible doit être inférieure à 100 %."); }
+    if (hc <= hi) { return fail("L'humidité cible doit être supérieure à l'humidité initiale."); }
+    // Même formule que la macro : masse × (cible − initiale) / (100 − cible), arrondie au gramme
+    var eau = Math.round((m * (hc - hi)) / (100 - hc));
+    $('out').textContent = eau.toLocaleString('fr-FR');
+    $('recap').textContent = 'Saisie : ' + fmt(m) + ' g | Humidité initiale : ' + fmt(hi) + ' % | Humidité cible : ' + fmt(hc) + ' %';
+  }
+
+  // Dernières valeurs saisies : mémorisées si le navigateur l'autorise
+  function save() {
+    try { localStorage.setItem('hydratation', JSON.stringify(IDS.map(function (id) { return $(id).value; }))); } catch (e) {}
+  }
+  function load() {
+    try {
+      var v = JSON.parse(localStorage.getItem('hydratation') || 'null');
+      if (v && v.length === IDS.length) IDS.forEach(function (id, i) { $(id).value = v[i]; });
+    } catch (e) {}
+  }
+
+  IDS.forEach(function (id) { $(id).addEventListener('input', function () { compute(); save(); }); });
+  $('calc').addEventListener('submit', function (e) { e.preventDefault(); compute(); });
+
+  load();
+  compute();
+</script>
+</body>
+</html>
