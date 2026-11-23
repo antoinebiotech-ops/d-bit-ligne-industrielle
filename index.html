@@ -1,161 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F6F1E3">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Hydratation">
-<title>Calcul de l'hydratation</title> 
+<meta name="theme-color" content="#f5f1e7">
+<title>Calculateur de débit – Ligne de fabrication</title>
 <style>
-  /* Mise en page : une colonne centrée. En-tête avec filet rouge, formulaire, bloc résultat. */
-  :root {
-    --bg: #F6F1E3;
-    --surface: #FCFAF2;
-    --fg: #141414;
-    --muted: #5B574A;
-    --line: #DAD2BA;
-    --green: #1E7B3F;
-    --red: #D1202C;
-    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
-    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
-    color-scheme: light;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.5;
-    min-height: 100vh;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    padding-top: max(24px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(40px, env(safe-area-inset-bottom, 0px));
-  }
-  .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
-
-  header { padding-bottom: 20px; border-bottom: 3px solid var(--red); }
-  h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 7vw, 36px); line-height: 1.1; color: var(--green); text-wrap: balance; }
-
-  form { display: flex; flex-direction: column; gap: 20px; }
-  .row { display: grid; grid-template-columns: 1fr; gap: 20px; }
-  @media (min-width: 480px) { .row { grid-template-columns: 1fr 1fr; } }
-  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  label { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--green); letter-spacing: 0.02em; }
-  .input-wrap { display: flex; align-items: stretch; background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .input-wrap:focus-within { border-color: var(--green); }
-  input[type="text"] { flex: 1; min-width: 0; font: inherit; font-size: 18px; font-variant-numeric: tabular-nums; color: var(--fg); background: transparent; border: 0; padding: 12px 14px; }
-  input[type="text"]:focus-visible { outline: none; }
-  .unit { display: flex; align-items: center; padding: 0 14px; color: var(--muted); font-size: 15px; border-left: 1.5px solid var(--line); }
-  .hint { margin: 0; font-size: 13px; color: var(--muted); }
-
-  .result { background: var(--surface); border: 1.5px solid var(--line); border-top: 5px solid var(--green); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-  .result h2 { margin: 0; font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); }
-  .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(44px, 12vw, 64px); line-height: 1; color: var(--green); font-variant-numeric: tabular-nums; }
-  .big small { font-size: 0.45em; font-weight: 600; margin-left: 6px; color: var(--fg); }
-  .recap { margin: 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-  .msg { margin: 0; font-size: 15px; color: var(--red); font-weight: 500; }
-  .msg[hidden] { display: none; }
-  input:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+:root{
+  --cream:#f5f1e7; --paper:#fffdf8; --ink:#171914; --green:#176b3a;
+  --green-dark:#10532d; --red:#c83232; --muted:#6b6b61; --line:#ded9cc;
+  --shadow:0 8px 24px rgba(34,39,28,.07);
+}
+*{box-sizing:border-box}
+html{background:var(--cream);color-scheme:light}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+main{width:min(760px,100%);margin:0 auto;padding:24px 18px 38px}
+.eyebrow{margin:25px 0 7px;color:var(--green);font-size:11px;font-weight:800;
+  letter-spacing:.14em;text-transform:uppercase}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.08;margin:0;font-weight:800;letter-spacing:-.8px}
+.intro{color:var(--muted);font-size:14px;line-height:1.5;margin:10px 0 22px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:19px;box-shadow:var(--shadow);margin-top:14px}
+.section-title{font-size:15px;font-weight:800;color:var(--green);margin:0 0 15px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{min-width:0}
+label{display:block;font-size:12px;line-height:1.35;font-weight:700;margin-bottom:7px}
+label .required{color:var(--red);font-weight:900}
+input{width:100%;min-height:48px;border:1.5px solid #d7d1c4;border-radius:10px;
+  padding:10px 12px;background:#fff;color:var(--ink);font-size:18px;font-weight:700;
+  outline:none;font-variant-numeric:tabular-nums}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,58,.12)}
+.hint{font-size:11px;color:var(--muted);margin-top:6px}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.result{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px}
+.result.primary{border:2px solid var(--green);background:#fbfdf9}
+.result-label{font-size:12px;line-height:1.35;color:var(--muted);font-weight:700;min-height:32px}
+.result-value{font-size:clamp(23px,5vw,30px);font-weight:850;letter-spacing:-.8px;
+  margin-top:8px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.result-unit{font-size:11px;color:var(--muted);margin-top:3px}
+.result.primary .result-value{color:var(--green-dark)}
+.full{grid-column:1/-1}
+.formula{border-top:1px solid var(--line);margin-top:17px;padding-top:13px;
+  font-size:12px;color:var(--muted);line-height:1.55}
+.formula strong{color:var(--ink)}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:800;cursor:pointer}
+.copy{background:var(--green);color:white;flex:1}
+.reset{background:#eee9de;color:var(--ink)}
+.status{font-size:12px;color:var(--green);min-height:17px;margin-top:9px}
+footer{text-align:center;color:var(--muted);font-size:11px;line-height:1.5;margin:22px 6px 0}
+@media(max-width:520px){
+ main{padding:17px 14px 30px}
+ .panel{padding:16px}
+ .field-grid{grid-template-columns:1fr}
+ .results{grid-template-columns:1fr}
+ .result-label{min-height:0}
+ .full{grid-column:auto}
+}
 </style>
 </head>
 <body>
+<main>
+<div class="eyebrow">Outil de production</div>
+<h1>Calcul du débit réel<br>de la ligne</h1>
+<p class="intro">À partir de la pesée des pâtes fraîches et des mesures d’humidité, estimez le débit de semoule à l’entrée et le débit de pâtes sèches en sortie.</p>
 
-<div class="wrap">
-  <header>
-    <h1>Calcul de l'hydratation</h1>
-  </header>
-
-  <form id="calc" novalidate>
+<section class="panel">
+  <h2 class="section-title">Valeurs mesurées <span style="color:var(--red)">•</span></h2>
+  <div class="field-grid">
     <div class="field">
-      <label for="masse">Masse de semoule ou farine</label>
-      <div class="input-wrap">
-        <input type="text" id="masse" inputmode="decimal" autocomplete="off" value="2000">
-        <span class="unit">g</span>
-      </div>
-      <p class="hint">Exemple : 2000</p>
+      <label for="freshRate">Débit de pâtes fraîches après extrusion (kg/h) <span class="required">*</span></label>
+      <input id="freshRate" type="number" inputmode="decimal" min="0" step="any" value="2884.8">
+      <div class="hint">Pesée du produit frais en sortie de moule</div>
     </div>
-    <div class="row">
-      <div class="field">
-        <label for="hi">Humidité initiale</label>
-        <div class="input-wrap">
-          <input type="text" id="hi" inputmode="decimal" autocomplete="off" value="12">
-          <span class="unit">%</span>
-        </div>
-        <p class="hint">Exemple : 12,5</p>
-      </div>
-      <div class="field">
-        <label for="hc">Humidité cible</label>
-        <div class="input-wrap">
-          <input type="text" id="hc" inputmode="decimal" autocomplete="off" value="31,5">
-          <span class="unit">%</span>
-        </div>
-        <p class="hint">Exemple : 31,7</p>
-      </div>
+    <div class="field">
+      <label for="freshMoisture">Humidité des pâtes fraîches (%) <span class="required">*</span></label>
+      <input id="freshMoisture" type="number" inputmode="decimal" min="0" max="100" step="any" value="33.3">
+      <div class="hint">Humidité mesurée au pétrin / produit frais</div>
     </div>
-  </form>
+    <div class="field">
+      <label for="semolinaMoisture">Humidité de la semoule à réception (%) <span class="required">*</span></label>
+      <input id="semolinaMoisture" type="number" inputmode="decimal" min="0" max="100" step="any" value="14.8">
+    </div>
+    <div class="field">
+      <label for="dryMoisture">Humidité des pâtes sèches en sortie de ligne (%) <span class="required">*</span></label>
+      <input id="dryMoisture" type="number" inputmode="decimal" min="0" max="100" step="any" value="12.1">
+    </div>
+  </div>
+</section>
 
-  <section class="result" aria-live="polite">
-    <h2>Eau à ajouter</h2>
-    <div class="big"><span id="out">–</span><small>g</small></div>
-    <p class="msg" id="msg" hidden></p>
-    <p class="recap" id="recap"></p>
-  </section>
-</div>
-
+<section class="panel">
+  <h2 class="section-title">Débits calculés</h2>
+  <div class="results" aria-live="polite">
+    <div class="result primary">
+      <div class="result-label">Débit de semoule à l’entrée (kg/h)</div>
+      <div class="result-value" id="semolinaRate">2 258,4</div>
+      <div class="result-unit">kg/h</div>
+    </div>
+    <div class="result primary">
+      <div class="result-label">Débit de pâtes sèches en sortie (kg/h)</div>
+      <div class="result-value" id="dryPastaRate">2 189,0</div>
+      <div class="result-unit">kg/h</div>
+    </div>
+    <div class="result full">
+      <div class="result-label">Débit de matières sèches (kg/h)</div>
+      <div class="result-value" id="dryMatterRate">1 924,2</div>
+      <div class="result-unit">kg/h</div>
+    </div>
+  </div>
+  <div class="formula">
+    <strong>Principe :</strong> les calculs sont réalisés sur la base de la matière sèche, considérée constante entre la semoule, les pâtes fraîches et les pâtes sèches.
+  </div>
+  <div class="actions">
+    <button class="copy" id="copyBtn" type="button">Copier les résultats</button>
+    <button class="reset" id="resetBtn" type="button">Réinitialiser</button>
+  </div>
+  <div class="status" id="status" role="status"></div>
+</section>
+<footer>Calcul automatique • Tous les débits sont exprimés en kg/h.</footer>
+</main>
 <script>
-  var $ = function (id) { return document.getElementById(id); };
-  var IDS = ['masse', 'hi', 'hc'];
+(() => {
+  const ids = ['freshRate','freshMoisture','semolinaMoisture','dryMoisture'];
+  const defaults = {freshRate:2884.8,freshMoisture:33.3,semolinaMoisture:14.8,dryMoisture:12.1};
+  const number = id => {
+    const raw = document.getElementById(id).value.trim().replace(',', '.');
+    return raw === '' ? NaN : Number(raw);
+  };
+  const fmt = value => new Intl.NumberFormat('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(value);
+  let latest = null;
 
-  function num(v) {
-    var n = parseFloat(String(v).trim().replace(',', '.'));
-    return isFinite(n) ? n : NaN;
-  }
-  function fmt(n) { return String(n).replace('.', ','); }
-
-  function fail(text) {
-    $('out').textContent = '–';
-    $('recap').textContent = '';
-    $('msg').textContent = text;
-    $('msg').hidden = false;
-  }
-
-  function compute() {
-    var m = num($('masse').value), hi = num($('hi').value), hc = num($('hc').value);
-    $('msg').hidden = true; $('msg').textContent = '';
-    if (isNaN(m) || isNaN(hi) || isNaN(hc)) {
-      $('out').textContent = '–'; $('recap').textContent = '';
+  function calculate(){
+    const [freshRate,freshMoisture,semolinaMoisture,dryMoisture] = ids.map(number);
+    const values = [freshRate,freshMoisture,semolinaMoisture,dryMoisture];
+    const valid = values.every(Number.isFinite) && freshRate >= 0 &&
+      [freshMoisture,semolinaMoisture,dryMoisture].every(v => v >= 0 && v < 100);
+    if(!valid){
+      ['semolinaRate','dryPastaRate','dryMatterRate'].forEach(id => document.getElementById(id).textContent = '—');
+      document.getElementById('status').textContent = 'Vérifiez les valeurs saisies : les humidités doivent être comprises entre 0 et 100 % (100 % exclu).';
+      latest = null;
       return;
     }
-    if (m <= 0) { return fail('La masse doit être supérieure à 0.'); }
-    if (hc >= 100) { return fail("L'humidité cible doit être inférieure à 100 %."); }
-    if (hc <= hi) { return fail("L'humidité cible doit être supérieure à l'humidité initiale."); }
-    // Même formule que la macro : masse × (cible − initiale) / (100 − cible), arrondie au gramme
-    var eau = Math.round((m * (hc - hi)) / (100 - hc));
-    $('out').textContent = eau.toLocaleString('fr-FR');
-    $('recap').textContent = 'Saisie : ' + fmt(m) + ' g | Humidité initiale : ' + fmt(hi) + ' % | Humidité cible : ' + fmt(hc) + ' %';
+    const dryMatter = freshRate * (1 - freshMoisture/100);
+    const semolina = dryMatter / (1 - semolinaMoisture/100);
+    const dryPasta = dryMatter / (1 - dryMoisture/100);
+    latest = {semolina,dryPasta,dryMatter};
+    document.getElementById('semolinaRate').textContent = fmt(semolina);
+    document.getElementById('dryPastaRate').textContent = fmt(dryPasta);
+    document.getElementById('dryMatterRate').textContent = fmt(dryMatter);
+    document.getElementById('status').textContent = '';
   }
-
-  // Dernières valeurs saisies : mémorisées si le navigateur l'autorise
-  function save() {
-    try { localStorage.setItem('hydratation', JSON.stringify(IDS.map(function (id) { return $(id).value; }))); } catch (e) {}
-  }
-  function load() {
+  ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    ids.forEach(id => document.getElementById(id).value = defaults[id]);
+    calculate();
+  });
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    if(!latest) return;
+    const text = [
+      'Débit de semoule à l’entrée : ' + fmt(latest.semolina) + ' kg/h',
+      'Débit de pâtes sèches en sortie : ' + fmt(latest.dryPasta) + ' kg/h',
+      'Débit de matières sèches : ' + fmt(latest.dryMatter) + ' kg/h'
+    ].join('\n');
+    const status = document.getElementById('status');
     try {
-      var v = JSON.parse(localStorage.getItem('hydratation') || 'null');
-      if (v && v.length === IDS.length) IDS.forEach(function (id, i) { $(id).value = v[i]; });
-    } catch (e) {}
-  }
-
-  IDS.forEach(function (id) { $(id).addEventListener('input', function () { compute(); save(); }); });
-  $('calc').addEventListener('submit', function (e) { e.preventDefault(); compute(); });
-
-  load();
-  compute();
+      await navigator.clipboard.writeText(text);
+      status.textContent = 'Résultats copiés.';
+    } catch(e) {
+      status.textContent = 'Copie indisponible sur ce navigateur.';
+    }
+  });
+  calculate();
+})();
 </script>
 </body>
 </html>
